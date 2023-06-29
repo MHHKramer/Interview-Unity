@@ -4,42 +4,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-/*
- * - Initial length of the snake.
-- Increase length per apple consumed.
-- Speed of the snake.
-- Speed of the bullet.
-- Rate of shooting.
-- Spawning rate of the enemy.
-- Apple target per level.
- */
-/*
-    [SerializeField] private int initialSnakeLength;
-    [SerializeField] private int snakeSizeIncreade;
-    [SerializeField] private int snakeSpeed;
-    [SerializeField] private int bulletSpeed;
-    [SerializeField] private int InitialSnakeLength;
-    [SerializeField] private int InitialSnakeLength;
-*/
-    public int InitialSankeLength { get; private set; }
-    public int SnakeSizeIncreade { get; private set; }
-    public int SnakeSpeed { get; private set; }
-    public int BulletSpeed { get; private set; }
-    public int BulletRate { get; private set; }
-    public int ShootRate { get; private set; }
-    public int AppleGoal { get; private set; }
-
     [field:SerializeField] public Vector2 GridSize { get; set; }
     [field:SerializeField] public Vector2 CenterPosition { get; set; }
 
     [SerializeField] private GameObject EnemyPrefab;
     [SerializeField] private GameObject WallPrefab;
+    [SerializeField] private GameObject ApplePrefab;
+
+    
+    [SerializeField] private float EnemySpawnRateInSeconds = 10.0f;
+    [SerializeField] private Transform WallContainer;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartCoroutine(EnemySpawnCoroutine());
+        SpawnWalls();
+        SpawnApple();
     }
 
     // Update is called once per frame
@@ -50,11 +33,49 @@ public class GameManager : MonoBehaviour
 
     private void SpawnWalls()
     {
-        //Instantiate(WallPrefab, new Vector3(centerPosition.x - GridSize, centerPosition.y, 0), Quaternion.identity);
+        for (int x = -1; x <= GridSize.x; x++)
+        {
+            for (int y = -1; y <= GridSize.y; y++)
+            {
+                if (x == -1 || y == -1 || x == GridSize.x || y == GridSize.y)
+                {
+                    GameObject wall = Instantiate(WallPrefab, new Vector3(x, y, 0), Quaternion.identity);
+                    wall.transform.parent = WallContainer;
+                }
+            }
+        }
+    }
+    
+    private IEnumerator EnemySpawnCoroutine()
+    {
+        yield return new WaitForSeconds(EnemySpawnRateInSeconds);
+        SpawnEnemy();
     }
     
     private void SpawnEnemy()
     {
+        int randomPositionX = (int)Random.Range(0, GridSize.x);
+        int randomPositionY = (int)Random.Range(0, GridSize.y);
+
+        Vector3 randomPosition = new Vector3(randomPositionX, randomPositionY, 0);
         
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] snake = GameObject.FindGameObjectsWithTag("Snake");
+        
+        //TODO Check positon
+
+        
+        Instantiate(EnemyPrefab, randomPosition, Quaternion.identity);
+        StartCoroutine(EnemySpawnCoroutine());
+    }
+
+    public void SpawnApple()
+    {
+        int randomPositionX = (int)Random.Range(0, GridSize.x);
+        int randomPositionY = (int)Random.Range(0, GridSize.y);
+
+        Vector3 randomPosition = new Vector3(randomPositionX, randomPositionY, 0);
+        
+        Instantiate(ApplePrefab, randomPosition, Quaternion.identity);
     }
 }

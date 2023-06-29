@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Apple
+  - Snake
   layers:
   - Default
   - TransparentFX

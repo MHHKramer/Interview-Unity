@@ -99,9 +99,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe395dfb634874d379835407259c6841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shootingSpeed: 2
   speed: 5
   stepTime: 0.2
+  gameManager: {fileID: 0}
   bodyPrefab: {fileID: 6345590972214484920, guid: 94c343117f47f470a80cf58def005fee, type: 3}
+  bulletPrefab: {fileID: 0}
 --- !u!61 &2921221619301853909
 BoxCollider2D:
   m_ObjectHideFlags: 0

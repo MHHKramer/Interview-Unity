@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
+    [SerializeField] private float shootingSpeed = 2.0f;
+
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private float stepTime = 0.2f;
     [SerializeField] private GameManager gameManager;
@@ -18,11 +20,14 @@ public class Snake : MonoBehaviour
     public GameObject bodyPrefab;
     public GameObject bulletPrefab;
 
+    private Coroutine shootingCoroutine;
+    private Coroutine movementCoroutine;
+
     // Start is called before the first frame update
     void Start()
     {
         body.Add(gameObject);
-        StartCoroutine(MoveCoroutine());
+        movementCoroutine = StartCoroutine(MoveCoroutine());
     }
 
     // Update is called once per frame
@@ -63,6 +68,7 @@ public class Snake : MonoBehaviour
         GameObject newBodyPart = Instantiate(bodyPrefab);
         newBodyPart.transform.position = body[body.Count - 1].transform.position;
         body.Add(newBodyPart);
+        gameManager.SpawnApple();
     }
 
     private IEnumerator MoveCoroutine()
@@ -105,14 +111,15 @@ public class Snake : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("On Trigger Enter 2D");
-        if (other.name == "Apple")
+        if (other.tag == "Apple")
         {
             HandleGrowth();
+            Destroy(other.gameObject);
         }
-        else if (other.name == "Enemy")
+        else if (other.tag == "Enemy")
         {
             HandleGameOver(GameOverReason.EnemyCollision);
+            StopCoroutine(movementCoroutine);
         }
     }
 
@@ -123,11 +130,23 @@ public class Snake : MonoBehaviour
 
     private void HandleShooting()
     {
+        if (shootingCoroutine != null)
+        {
+            return;
+        }
+        
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         if (enemies.Length > 0)
         {
-            Instantiate(bulletPrefab);
-
+            Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         }
+
+        shootingCoroutine = StartCoroutine(StartShootingCoroutine());
+    }
+
+    private IEnumerator StartShootingCoroutine()
+    {
+        yield return new WaitForSeconds(shootingSpeed);
+        shootingCoroutine = null;
     }
 }
