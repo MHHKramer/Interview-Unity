@@ -29,6 +29,11 @@ public class GameManager : MonoBehaviour
     public int ShootRate { get; private set; }
     public int AppleGoal { get; private set; }
 
+    [field:SerializeField] public Vector2 GridSize { get; set; }
+    [field:SerializeField] public Vector2 CenterPosition { get; set; }
+
+    [SerializeField] private GameObject EnemyPrefab;
+    [SerializeField] private GameObject WallPrefab;
 
 
     // Start is called before the first frame update
@@ -39,6 +44,16 @@ public class GameManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        
+    }
+
+    private void SpawnWalls()
+    {
+        //Instantiate(WallPrefab, new Vector3(centerPosition.x - GridSize, centerPosition.y, 0), Quaternion.identity);
+    }
+    
+    private void SpawnEnemy()
     {
         
     }
